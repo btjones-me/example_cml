@@ -2,8 +2,8 @@ name: model-training
 on: [push]
 jobs:
   run:
-    runs-on: [ubuntu-latest]
-    container: docker://dvcorg/cml-py3:latest
+    runs-on: [self-hosted, cml, gpu]
+#     container: docker://dvcorg/cml-py3:latest
     steps:
       - uses: actions/checkout@v2
       - name: cml_run
@@ -16,3 +16,4 @@ jobs:
           cat metrics.txt >> report.md
           cml-publish confusion_matrix.png --md >> report.md
           cml-send-comment report.md
+        
