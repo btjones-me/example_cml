@@ -2,7 +2,7 @@ name: model-training
 on: [push]
 jobs:
   run:
-    runs-on: [self-hosted, cml, gpu]
+    runs-on: [self-hosted, cml]
 #     container: docker://dvcorg/cml-py3:latest
     steps:
       - uses: actions/checkout@v2
