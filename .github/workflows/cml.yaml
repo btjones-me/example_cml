@@ -18,7 +18,7 @@ jobs:
               --driver amazonec2 \
               --amazonec2-instance-type t2.micro \
               --amazonec2-region eu-west-2 \
-              --amazonec2-zone f \
+              --amazonec2-zone a \
               --amazonec2-vpc-id vpc-90cb42f8 \
               --amazonec2-ssh-user ubuntu \
               $MACHINE
