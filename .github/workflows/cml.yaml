@@ -36,24 +36,23 @@ jobs:
             
           echo got to debug point 3a && \
 
-          la ~/.docker/machine && \
+          # la ~/.docker/machine && \
           
-          echo got to debug point 3b && \
+          # echo got to debug point 3b && \
 
-          la / && \
-          echo `la /` && \
+          echo `la /` ; \
           
           echo got to debug point 3c && \
 
-          la /docker_machine && \
+          la /docker_machine ; \
           
-          echo got to debug point 3d && \
+          echo got to debug point 3d ; \
 
           # there's a problem here 
-          docker-machine scp -r ~/.docker/machine \ 
+          docker-machine scp -r ~/.docker/machine \
             $MACHINE:/docker_machine && \
 
-          echo got to debug point 3e && \
+          echo got to debug point 3e ; \
 
           docker run --name runner -d \
             -v /docker_machine/machine:/root/.docker/machine \
