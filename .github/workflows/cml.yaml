@@ -22,8 +22,12 @@ jobs:
               --amazonec2-vpc-id vpc-90cb42f8 \
               --amazonec2-ssh-user ubuntu \
               $MACHINE
-
+              
+          echo got to debug point 1
+          
           eval "$(docker-machine env --shell sh $MACHINE)"
+
+          echo got to debug point 2
 
           (
           docker-machine ssh \
@@ -31,6 +35,8 @@ jobs:
             sudo chmod 777 /docker_machine" && \
           docker-machine scp -r -q ~/.docker/machine \ 
             $MACHINE:/docker_machine && \
+
+          echo got to debug point 3 && \
 
           docker run --name runner -d \
             -v /docker_machine/machine:/root/.docker/machine \
@@ -43,6 +49,10 @@ jobs:
 
           sleep 20 && echo "Deployed $MACHINE"
           ) || (echo y | docker-machine rm $MACHINE && exit 1)
+
+          echo got to debug point 4
+
+          
   train:
     needs: deploy-cloud-runner
     runs-on: [self-hosted, cml]
