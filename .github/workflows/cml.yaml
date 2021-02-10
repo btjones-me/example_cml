@@ -17,9 +17,9 @@ jobs:
           docker-machine create \
               --driver amazonec2 \
               --amazonec2-instance-type t2.micro \
-              --amazonec2-region us-east-1 \
+              --amazonec2-region eu-west-2 \
               --amazonec2-zone f \
-              --amazonec2-vpc-id vpc-06bc773d85a0a04f7 \
+              --amazonec2-vpc-id vpc-90cb42f8 \
               --amazonec2-ssh-user ubuntu \
               $MACHINE
 
@@ -37,7 +37,7 @@ jobs:
             -e RUNNER_IDLE_TIMEOUT=120 \
             -e DOCKER_MACHINE=${MACHINE} \
             -e RUNNER_LABELS=cml \
-            -e repo_token=$repo_token \
+            -e repo_token=${ secrets.REPO_TOKEN } \
             -e RUNNER_REPO="https://github.com/${GITHUB_REPOSITORY}" \
            dvcorg/cml-py3 && \
 
