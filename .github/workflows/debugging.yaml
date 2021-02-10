@@ -1,12 +1,11 @@
 name: debugging
 on: workflow_dispatch
 jobs:
-  run:
+  print-to-console:
     runs-on: [ubuntu-latest]
     steps:
-      - name: debug1
-        run: |
+      - run: |
           echo "GITHUB_REPOSITORY: ${GITHUB_REPOSITORY}"
           echo "REPO_TOKEN: ${{ secrets.REPO_TOKEN }}"
           echo "AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}"
-          echo "AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          echo "AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
