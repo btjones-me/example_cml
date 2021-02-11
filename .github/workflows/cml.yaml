@@ -34,14 +34,9 @@ jobs:
             $MACHINE "sudo mkdir -p /docker_machine && \
             sudo chmod 777 /docker_machine" && \
 
-          echo got to debug point 3a && \
-
-          # there's a problem here 
           docker-machine scp -r ~/.docker/machine \
             $MACHINE:/docker_machine && \
             
-          echo got to debug point 3b && \
-
           docker run --name runner -d \
             -v /docker_machine/machine:/root/.docker/machine \
             -e RUNNER_IDLE_TIMEOUT=120 \
