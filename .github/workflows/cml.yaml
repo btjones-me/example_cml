@@ -29,6 +29,9 @@ jobs:
 
           echo got to debug point 2
 
+          echo ${GITHUB_REPOSITORY}
+          
+
           (
           docker-machine ssh \
             $MACHINE "sudo mkdir -p /docker_machine && \
@@ -39,11 +42,11 @@ jobs:
             
           docker run --name runner -d \
             -v /docker_machine/machine:/root/.docker/machine \
-            -e RUNNER_IDLE_TIMEOUT=600 \
+            -e RUNNER_IDLE_TIMEOUT=1200 \
             -e DOCKER_MACHINE=${MACHINE} \
             -e RUNNER_LABELS=cml \
             -e repo_token=$repo_token \
-            -e RUNNER_REPO="https://github.com/${GITHUB_REPOSITORY}" \
+            -e RUNNER_REPO="https://github.com/btjones-me/example-cml" \
            dvcorg/cml-py3 && \
 
           sleep 20 && echo "Deployed $MACHINE"
