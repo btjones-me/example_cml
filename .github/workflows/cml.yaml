@@ -50,6 +50,8 @@ jobs:
             -e RUNNER_REPO="https://github.com/btjones-me/example-cml" \
            dvcorg/cml-py3 && \
            
+          docker-machine ssh $MACHINE "docker logs $runner_name" && \
+          
           echo got to here 3 && \
          
           docker-machine ssh $MACHINE "sudo usermod -aG docker ubuntu" && \
