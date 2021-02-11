@@ -39,7 +39,7 @@ jobs:
             
           docker run --name runner -d \
             -v /docker_machine/machine:/root/.docker/machine \
-            -e RUNNER_IDLE_TIMEOUT=120 \
+            -e RUNNER_IDLE_TIMEOUT=600 \
             -e DOCKER_MACHINE=${MACHINE} \
             -e RUNNER_LABELS=cml \
             -e repo_token=$repo_token \
