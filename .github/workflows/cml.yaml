@@ -63,6 +63,9 @@ jobs:
            dvcorg/cml-py3 && \
           echo "docker run complete." && \
           
+          echo "Checking run status..."
+          docker-machine ssh $MACHINE "docker ps -a" && \
+          
           echo "Getting logs from $runner_name ..." && \
           docker-machine ssh $MACHINE "docker logs $runner_name" && \
 
