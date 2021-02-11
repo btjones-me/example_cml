@@ -52,7 +52,7 @@ jobs:
           echo got to here 3 && \ 
            
           docker-machine ssh \
-            $MACHINE "echo $(docker run hello-world)" && \
+            $MACHINE "docker run hello-world" && \
 
           sleep 20 && echo "Deployed $MACHINE"
           ) || (echo y | docker-machine rm $MACHINE && exit 1)
