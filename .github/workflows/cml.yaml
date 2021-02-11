@@ -39,8 +39,9 @@ jobs:
 
           docker-machine scp -r ~/.docker/machine \
             $MACHINE:/docker_machine && \
-            
-          docker run --name runner -d \
+          
+          runner_name=cml-runner
+          docker run --name $runner_name -d \
             -v /docker_machine/machine:/root/.docker/machine \
             -e RUNNER_IDLE_TIMEOUT=1200 \
             -e DOCKER_MACHINE=${MACHINE} \
@@ -49,13 +50,16 @@ jobs:
             -e RUNNER_REPO="https://github.com/btjones-me/example-cml" \
            dvcorg/cml-py3 && \
            
-          echo got to here 3 && \ 
+          echo got to here 3 && \
+         
+          docker-machine ssh $MACHINE "sudo usermod -aG docker ubuntu" && \
            
           docker-machine ssh \
             $MACHINE "docker run hello-world" && \
 
           sleep 20 && echo "Deployed $MACHINE"
-          ) || (echo y | docker-machine rm $MACHINE && exit 1)
+          ) || (docker-machine ssh $MACHINE "docker logs $runner_name"; \
+          echo y | docker-machine rm $MACHINE && exit 1)
 
           echo got to debug point 4
 
