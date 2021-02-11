@@ -42,7 +42,7 @@ jobs:
             -e RUNNER_IDLE_TIMEOUT=120 \
             -e DOCKER_MACHINE=${MACHINE} \
             -e RUNNER_LABELS=cml \
-            -e repo_token=${ secrets.REPO_TOKEN } \
+            -e repo_token=$repo_token \
             -e RUNNER_REPO="https://github.com/${GITHUB_REPOSITORY}" \
            dvcorg/cml-py3 && \
 
