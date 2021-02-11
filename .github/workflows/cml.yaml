@@ -48,6 +48,11 @@ jobs:
             -e repo_token=$repo_token \
             -e RUNNER_REPO="https://github.com/btjones-me/example-cml" \
            dvcorg/cml-py3 && \
+           
+          echo got to here 3 && \ 
+           
+          docker-machine ssh \
+            $MACHINE "echo $(docker run hello-world)" && \
 
           sleep 20 && echo "Deployed $MACHINE"
           ) || (echo y | docker-machine rm $MACHINE && exit 1)
