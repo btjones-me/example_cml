@@ -66,8 +66,11 @@ jobs:
           echo "Checking run status..."
           docker-machine ssh $MACHINE "docker ps -a" && \
           
-          echo "Getting logs from $runner_name ..." && \
+          echo "Getting logs from docker-machine: $runner_name ..." && \
           docker-machine ssh $MACHINE "docker logs $runner_name" && \
+          
+          echo "Getting logs from docker directly: $runner_name ..." && \
+          docker logs $runner_name && \
 
           sleep 20 && echo "Deployed $MACHINE"
           ) || (docker-machine ssh $MACHINE "docker logs $runner_name"; \
