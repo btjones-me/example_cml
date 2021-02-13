@@ -39,6 +39,9 @@ jobs:
             $MACHINE "docker run hello-world" 
           echo "hello-world run."
   
+          echo "Installing ec2 instance connect..."
+          docker-machine ssh $MACHINE sudo apt-get install --yes ec2-instance-connect
+          echo "ec2 instance connect installed."
           
           (
           echo "ssh: creating directory..." && \
