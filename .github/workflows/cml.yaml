@@ -1,9 +1,92 @@
-name: model-training
+name: train-my-model
 on: [push, workflow_dispatch]
 jobs:
-  run:
+  deploy-cloud-runner:
     runs-on: [ubuntu-latest]
     container: docker://dvcorg/cml-py3:latest
+    steps:
+      - name: deploy
+        env:
+          runner_name: cml-runner
+          repo_token: ${{ secrets.PAT_REPO_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          echo "Deploying with docker-machine..."
+          MACHINE="cml$(date +%s)"
+          docker-machine create \
+              --driver amazonec2 \
+              --amazonec2-instance-type t2.micro \
+              --amazonec2-region eu-west-2 \
+              --amazonec2-zone a \
+              --amazonec2-vpc-id vpc-90cb42f8 \
+              --amazonec2-ssh-user ubuntu \
+              $MACHINE
+          echo "docker-machine complete."
+              
+          echo "Setting up shell..."
+          eval "$(docker-machine env --shell sh $MACHINE)"
+          echo "Shell set up."
+          
+          
+          echo "GitHub Repo: ${GITHUB_REPOSITORY}"
+          
+          echo "Adjusting permissions."
+          docker-machine ssh $MACHINE "sudo usermod -aG docker ubuntu"
+           
+          echo "Running hello-world..."
+          docker-machine ssh \
+            $MACHINE "docker run hello-world" 
+          echo "hello-world run."
+  
+          echo "Installing ec2 instance connect..."
+          docker-machine ssh $MACHINE sudo apt-get install --yes ec2-instance-connect
+          echo "ec2 instance connect installed."
+          
+          (
+          echo "ssh: creating directory..." && \
+          docker-machine ssh \
+            $MACHINE "sudo mkdir -p /docker_machine && \
+            sudo chmod 777 /docker_machine" && \
+          echo "ssh: created directory." && \
+
+          echo "scp: transferring..." && \
+          docker-machine scp -r ~/.docker/machine \
+            $MACHINE:/docker_machine && \
+          echo "scp: transferred." && \
+          
+          echo "docker run, runner_name: $runner_name ..." && \
+          docker run --name $runner_name -d \
+            -v /docker_machine/machine:/root/.docker/machine \
+            -e RUNNER_IDLE_TIMEOUT=1200 \
+            -e DOCKER_MACHINE=${MACHINE} \
+            -e RUNNER_LABELS=cml \
+            -e repo_token=$repo_token \
+            -e RUNNER_REPO="https://github.com/btjones-me/example-cml" \
+           dvcorg/cml-py3 && \
+          echo "docker run complete." && \
+          
+          echo "Checking run status..."
+          docker-machine ssh $MACHINE "docker ps -a" && \
+          
+          echo "Getting logs from docker-machine: $runner_name ..." && \
+          docker-machine ssh $MACHINE "docker logs $runner_name" && \
+          
+          echo "Getting logs from docker directly: $runner_name ..." && \
+          docker logs $runner_name && \
+
+          sleep 20 && echo "Deployed $MACHINE"
+          ) || (docker-machine ssh $MACHINE "docker logs $runner_name"; \
+          echo y | docker-machine rm $MACHINE && exit 1)
+
+          echo "Finished stage."
+
+          
+  train:
+    needs: deploy-cloud-runner
+    runs-on: [self-hosted, cml]
+
     steps:
       - uses: actions/checkout@v2
       - name: cml_run
@@ -16,3 +99,4 @@ jobs:
           cat metrics.txt >> report.md
           cml-publish confusion_matrix.png --md >> report.md
           cml-send-comment report.md
+          
