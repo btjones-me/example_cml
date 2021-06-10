@@ -1,0 +1,47 @@
+# Continuous machine learning yaml file shows a demonstration of how one might run training experiments in the cloud
+#   the workflow first shows how one can use cml to provision and deploy custom ec2 compute,
+#   and then how to setup an environment and run the experiment pipeline on the cloud.
+#   The results are then posted to a pull request for analysis. If an improvement is made, one can merge with main.
+name: Create Cloud Runner
+on: [push, workflow_dispatch]
+jobs:
+  deploy-cloud-runner:
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: iterative/setup-cml@v1
+
+      - name: deploy
+        env:
+          runner_name: cml-runner
+          repo_token: ${{ secrets.MLOPS_CI_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.MLOPS_CI_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.MLOPS_CI_AWS_SECRET_ACCESS_KEY }}
+        shell: bash
+        run: |
+
+          # add ability to connect from AWS console. will require permissions to use ec2-instance-connect
+          script=$(echo 'sudo apt update && sudo apt-get install --yes ec2-instance-connect' | base64 --wrap 0)
+
+          # use cml to create an ec2 instance to run training on. uses terraform underneath.
+          echo 'provisioning ec2 compute instance with cml...'
+          # cml-runner \
+          #   --cloud=aws \
+          #   --cloud-region=eu-west-2 \  # london
+          #   --cloud-type=t2.small \  # use g4dn.xlarge or similar for GPU
+          #   --labels=cml-demo \  # matches as a key for "runs-on" of future steps, ensure this is unique per project
+          #   --idle-timeout=1000 \  # in seconds, your instance will destroy itself after it finishes the job and the idle-timeout completes
+          #   --cloud-spot=true \  # select whether or not to use a spot instance, to see which instances are typically available see: https://aws.amazon.com/ec2/spot/instance-advisor/
+          #   --cloud-startup-script=$script \  # run a script on instance startup
+          #   --reuse=true  # if true, a previously provisioned instance can be reused to speed up process
+          cml-runner \
+             --cloud=aws \
+             --cloud-region=eu-west-2 \
+             --cloud-type=t2.medium \
+             --labels=cml-demo \
+             --idle-timeout=1000 \
+             --cloud-spot=true \
+             --cloud-startup-script=$script \
+             --reuse=true
+          echo "Finished stage."
