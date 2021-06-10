@@ -15,9 +15,9 @@ jobs:
       - name: deploy
         env:
           runner_name: cml-runner
-          repo_token: ${{ secrets.MLOPS_CI_TOKEN }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.MLOPS_CI_AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.MLOPS_CI_AWS_SECRET_ACCESS_KEY }}
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         shell: bash
         run: |
 
