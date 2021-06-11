@@ -37,7 +37,7 @@ jobs:
           #   --reuse=true  # if true, a previously provisioned instance can be reused to speed up process
           cml-runner \
              --cloud=aws \
-             --cloud-region=eu-west-2 \
+             --cloud-region=us-west \
              --cloud-type=t2.medium \
              --labels=cml-demo \
              --idle-timeout=1000 \
