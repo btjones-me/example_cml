@@ -43,5 +43,5 @@ jobs:
              --idle-timeout=1000 \
              --cloud-spot=true \
              --cloud-startup-script=$script \
-             --reuse=true
+             --reuse=false
           echo "Finished stage."
